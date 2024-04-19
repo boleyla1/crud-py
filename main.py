@@ -1,3 +1,4 @@
+
 from tkinter import *
 import messagebox
 from tkinter import ttk
@@ -27,7 +28,7 @@ class human(Base):
         self.family = family
         self.age = age
 Base.metadata.create_all(engine)
-def OnClickRegister(e):
+def onClickRegister(e):
     human1 = human( name=TxtName.get(), family=TxtFamily.get(), age=TxtAge.get())
     register(human1)
     loadData()
@@ -37,23 +38,23 @@ def insertTable(human):
 def register(human):
     session.add(human)
     session.commit()
-def OnClickSearch(e):
-    dialog=TxtName.get()
-    if dialog=='':
+def onClickSearch(e):
+    dialog = TxtSearch.get()
+    result = Search(dialog)
+    CleanTable()
+    if dialog == '':
         loadData()
     else:
-        result =Search(dialog)
-        CleanTable()
         for item in result:
             insertTable(item)
 
-def Search(dialog, resultList=None):
+def Search(dialog):
     alldata = session.query(human).all()
-    resultList()
+    resultList=[]
     for data in alldata:
         if data.name == dialog or data.family == dialog or data.age == dialog:
             resultList.append(data)
-        return resultList
+    return resultList
 def CleanTable():
     for item in Table.get_children():
         Table.delete(item)
@@ -93,12 +94,13 @@ Table.place(x=30, y=300)
 
 #buttons
 btnSearch = Button(Window, text='Search')
-btnSearch.bind('<Button-1>', OnClickSearch)
+btnSearch.bind('<Button-1>', onClickSearch)
 btnSearch.place(x=30, y=270)
 btnGet = Button(Window, text='register', )
-btnGet.bind('<Button-1>', OnClickRegister)
+btnGet.bind('<Button-1>', onClickRegister)
 btnGet.place(x=120, y=230)
 
 
 # run window with loop
+loadData()
 Window.mainloop()
